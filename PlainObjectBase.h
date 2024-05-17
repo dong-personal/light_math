@@ -436,14 +436,6 @@ protected:
     *this = other.derived();
   }
   /** \brief Copy constructor with in-place evaluation */
-  template <typename OtherDerived>
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE PlainObjectBase(const ReturnByValue<OtherDerived>& other)
-  {
-    _check_template_params();
-    // FIXME this does not automatically transpose vectors if necessary
-    resize(other.rows(), other.cols());
-    other.evalTo(this->derived());
-  }
 
 public:
   /** \brief Copies the generic expression \a other into *this.
@@ -601,6 +593,86 @@ protected:
     resize(size);
   }
 
+  /** Resizes \c *this to a vector of length \a size
+   *
+   * \only_for_vectors. This method does not work for
+   * partially dynamic matrices when the static dimension is anything other
+   * than 1. For example it will not work with Matrix<double, 2, Dynamic>.
+   *
+   * Example: \include Matrix_resize_int.cpp
+   * Output: \verbinclude Matrix_resize_int.out
+   *
+   * \sa resize(Index,Index), resize(NoChange_t, Index), resize(Index, NoChange_t)
+   */
+  EIGEN_DEVICE_FUNC
+  inline void resize(Index size)
+  {
+    EIGEN_STATIC_ASSERT_VECTOR_ONLY(PlainObjectBase)
+    eigen_assert(((SizeAtCompileTime == Dynamic &&
+                   (MaxSizeAtCompileTime == Dynamic || size <= MaxSizeAtCompileTime)) ||
+                  SizeAtCompileTime == size) &&
+                 size >= 0);
+#ifdef EIGEN_INITIALIZE_COEFFS
+    bool size_changed = size != this->size();
+#endif
+    if (RowsAtCompileTime == 1)
+      m_storage.resize(size, 1, size);
+    else
+      m_storage.resize(size, size, 1);
+#ifdef EIGEN_INITIALIZE_COEFFS
+    if (size_changed) EIGEN_INITIALIZE_COEFFS_IF_THAT_OPTION_IS_ENABLED
+#endif
+  }
+
+  /** Resizes the matrix, changing only the number of columns. For the parameter of type NoChange_t, just pass
+   * the special value \c NoChange as in the example below.
+   *
+   * Example: \include Matrix_resize_NoChange_int.cpp
+   * Output: \verbinclude Matrix_resize_NoChange_int.out
+   *
+   * \sa resize(Index,Index)
+   */
+  EIGEN_DEVICE_FUNC
+  inline void resize(NoChange_t, Index cols) { resize(rows(), cols); }
+
+  /** Resizes the matrix, changing only the number of rows. For the parameter of type NoChange_t, just pass
+   * the special value \c NoChange as in the example below.
+   *
+   * Example: \include Matrix_resize_int_NoChange.cpp
+   * Output: \verbinclude Matrix_resize_int_NoChange.out
+   *
+   * \sa resize(Index,Index)
+   */
+  EIGEN_DEVICE_FUNC
+  inline void resize(Index rows, NoChange_t) { resize(rows, cols()); }
+
+  /** Resizes \c *this to have the same dimensions as \a other.
+   * Takes care of doing all the checking that's needed.
+   *
+   * Note that copying a row-vector into a vector (and conversely) is allowed.
+   * The resizing, if any, is then done in the appropriate way so that row-vectors
+   * remain row-vectors and vectors remain vectors.
+   */
+  template <typename OtherDerived>
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void resizeLike(const EigenBase<OtherDerived>& _other)
+  {
+    const OtherDerived& other = _other.derived();
+    internal::check_rows_cols_for_overflow<MaxSizeAtCompileTime>::run(other.rows(), other.cols());
+    const Index othersize = other.rows() * other.cols();
+    if (RowsAtCompileTime == 1)
+    {
+      eigen_assert(other.rows() == 1 || other.cols() == 1);
+      resize(1, othersize);
+    }
+    else if (ColsAtCompileTime == 1)
+    {
+      eigen_assert(other.rows() == 1 || other.cols() == 1);
+      resize(othersize, 1);
+    }
+    else
+      resize(other.rows(), other.cols());
+  }
+
   // We have a 1x1 matrix/array => the argument is interpreted as the value of the unique coefficient (case
   // where scalar type can be implicitly converted)
   template <typename T>
@@ -653,19 +725,6 @@ protected:
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void _init1(const EigenBase<OtherDerived>& other)
   {
     this->derived() = other;
-  }
-
-  template <typename T, typename OtherDerived>
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void _init1(const ReturnByValue<OtherDerived>& other)
-  {
-    resize(other.rows(), other.cols());
-    other.evalTo(this->derived());
-  }
-
-  template <typename T, typename OtherDerived, int ColsAtCompileTime>
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void _init1(const RotationBase<OtherDerived, ColsAtCompileTime>& r)
-  {
-    this->derived() = r;
   }
 
   // For fixed-size Array<Scalar,...>

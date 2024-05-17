@@ -251,16 +251,6 @@ public:
 #ifndef EIGEN_PARSED_BY_DOXYGEN
   /** \internal Represents a matrix with all coefficients equal to one another*/
   typedef CwiseNullaryOp<internal::scalar_constant_op<Scalar>, PlainObject> ConstantReturnType;
-  /** \internal \deprecated Represents a vector with linearly spaced coefficients that allows sequential
-   * access only. */
-  EIGEN_DEPRECATED typedef CwiseNullaryOp<internal::linspaced_op<Scalar>, PlainObject>
-      SequentialLinSpacedReturnType;
-  /** \internal Represents a vector with linearly spaced coefficients that allows random access. */
-  typedef CwiseNullaryOp<internal::linspaced_op<Scalar>, PlainObject> RandomAccessLinSpacedReturnType;
-  /** \internal the return type of MatrixBase::eigenvalues() */
-  typedef Matrix<typename NumTraits<typename internal::traits<Derived>::Scalar>::Real,
-                 internal::traits<Derived>::ColsAtCompileTime, 1>
-      EigenvaluesReturnType;
 
 #endif  // not EIGEN_PARSED_BY_DOXYGEN
 
@@ -282,9 +272,6 @@ public:
   template <typename OtherDerived>
   EIGEN_DEVICE_FUNC Derived& operator-=(const EigenBase<OtherDerived>& other);
 
-  template <typename OtherDerived>
-  EIGEN_DEVICE_FUNC Derived& operator=(const ReturnByValue<OtherDerived>& func);
-
   /** \internal
    * Copies \a other into *this without evaluating other. \returns a reference to *this. */
   template <typename OtherDerived>
@@ -304,28 +291,9 @@ public:
   template <typename OtherDerived>
   EIGEN_DEVICE_FUNC CommaInitializer<Derived> operator<<(const DenseBase<OtherDerived>& other);
 
-  typedef Transpose<Derived> TransposeReturnType;
-  EIGEN_DEVICE_FUNC
-  TransposeReturnType transpose();
-  typedef Transpose<const Derived> ConstTransposeReturnType;
-  EIGEN_DEVICE_FUNC
-  const ConstTransposeReturnType transpose() const;
-  EIGEN_DEVICE_FUNC
-  void transposeInPlace();
-
   EIGEN_DEVICE_FUNC static const ConstantReturnType Constant(Index rows, Index cols, const Scalar& value);
   EIGEN_DEVICE_FUNC static const ConstantReturnType Constant(Index size, const Scalar& value);
   EIGEN_DEVICE_FUNC static const ConstantReturnType Constant(const Scalar& value);
-
-  EIGEN_DEPRECATED EIGEN_DEVICE_FUNC static const RandomAccessLinSpacedReturnType LinSpaced(
-      Sequential_t, Index size, const Scalar& low, const Scalar& high);
-  EIGEN_DEPRECATED EIGEN_DEVICE_FUNC static const RandomAccessLinSpacedReturnType LinSpaced(
-      Sequential_t, const Scalar& low, const Scalar& high);
-
-  EIGEN_DEVICE_FUNC static const RandomAccessLinSpacedReturnType LinSpaced(Index size, const Scalar& low,
-                                                                           const Scalar& high);
-  EIGEN_DEVICE_FUNC static const RandomAccessLinSpacedReturnType LinSpaced(const Scalar& low,
-                                                                           const Scalar& high);
 
   template <typename CustomNullaryOp>
   EIGEN_DEVICE_FUNC static const CwiseNullaryOp<CustomNullaryOp, PlainObject> NullaryExpr(
