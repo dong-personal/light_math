@@ -150,16 +150,6 @@ private:
   ArrayBase(Index, Index);
   template <typename OtherDerived>
   explicit ArrayBase(const ArrayBase<OtherDerived>&);
-
-protected:
-  // mixing arrays and matrices is not legal
-  // template<typename OtherDerived> Derived& operator+=(const MatrixBase<OtherDerived>& )
-  // {EIGEN_STATIC_ASSERT(std::ptrdiff_t(sizeof(typename
-  // OtherDerived::Scalar))==-1,YOU_CANNOT_MIX_ARRAYS_AND_MATRICES); return *this;}
-  // // mixing arrays and matrices is not legal
-  // template<typename OtherDerived> Derived& operator-=(const MatrixBase<OtherDerived>& )
-  // {EIGEN_STATIC_ASSERT(std::ptrdiff_t(sizeof(typename
-  // OtherDerived::Scalar))==-1,YOU_CANNOT_MIX_ARRAYS_AND_MATRICES); return *this;}
 };
 
 /** replaces \c *this by \c *this - \a other.

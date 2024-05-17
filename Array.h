@@ -97,9 +97,6 @@ public:
   typedef typename Base::PlainObject PlainObject;
 
 protected:
-  template <typename Derived, typename OtherDerived, bool IsVector>
-  friend struct internal::conservative_resize_like_impl;
-
   using Base::m_storage;
 
 public:
