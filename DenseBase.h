@@ -53,7 +53,7 @@ public:
   /** Inner iterator type to iterate over the coefficients of a row or column.
    * \sa class InnerIterator
    */
-  typedef Eigen::InnerIterator<Derived> InnerIterator;
+  // typedef Eigen::InnerIterator<Derived> InnerIterator;
 
   typedef typename internal::traits<Derived>::StorageKind StorageKind;
 
@@ -546,25 +546,25 @@ public:
   }
   EIGEN_DEVICE_FUNC ColwiseReturnType colwise();
 
-  typedef CwiseNullaryOp<internal::scalar_random_op<Scalar>, PlainObject> RandomReturnType;
-  static const RandomReturnType Random(Index rows, Index cols);
-  static const RandomReturnType Random(Index size);
-  static const RandomReturnType Random();
+  // typedef CwiseNullaryOp<internal::scalar_random_op<Scalar>, PlainObject> RandomReturnType;
+  // static const RandomReturnType Random(Index rows, Index cols);
+  // static const RandomReturnType Random(Index size);
+  // static const RandomReturnType Random();
 
-  template <typename ThenDerived, typename ElseDerived>
-  inline EIGEN_DEVICE_FUNC const Select<Derived, ThenDerived, ElseDerived> select(
-      const DenseBase<ThenDerived>& thenMatrix, const DenseBase<ElseDerived>& elseMatrix) const;
+  // template <typename ThenDerived, typename ElseDerived>
+  // inline EIGEN_DEVICE_FUNC const Select<Derived, ThenDerived, ElseDerived> select(
+  //     const DenseBase<ThenDerived>& thenMatrix, const DenseBase<ElseDerived>& elseMatrix) const;
 
-  template <typename ThenDerived>
-  inline EIGEN_DEVICE_FUNC const Select<Derived, ThenDerived, typename ThenDerived::ConstantReturnType>
-  select(const DenseBase<ThenDerived>& thenMatrix, const typename ThenDerived::Scalar& elseScalar) const;
+  // template <typename ThenDerived>
+  // inline EIGEN_DEVICE_FUNC const Select<Derived, ThenDerived, typename ThenDerived::ConstantReturnType>
+  // select(const DenseBase<ThenDerived>& thenMatrix, const typename ThenDerived::Scalar& elseScalar) const;
 
-  template <typename ElseDerived>
-  inline EIGEN_DEVICE_FUNC const Select<Derived, typename ElseDerived::ConstantReturnType, ElseDerived>
-  select(const typename ElseDerived::Scalar& thenScalar, const DenseBase<ElseDerived>& elseMatrix) const;
+  // template <typename ElseDerived>
+  // inline EIGEN_DEVICE_FUNC const Select<Derived, typename ElseDerived::ConstantReturnType, ElseDerived>
+  // select(const typename ElseDerived::Scalar& thenScalar, const DenseBase<ElseDerived>& elseMatrix) const;
 
-  template <int p>
-  RealScalar lpNorm() const;
+  // template <int p>
+  // RealScalar lpNorm() const;
 
   template <int RowFactor, int ColFactor>
   EIGEN_DEVICE_FUNC const Replicate<Derived, RowFactor, ColFactor> replicate() const;

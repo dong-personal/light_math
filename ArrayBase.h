@@ -93,8 +93,8 @@ public:
 #include "../plugins/ArrayCwiseBinaryOps.h"
 #include "../plugins/ArrayCwiseUnaryOps.h"
 #include "../plugins/CommonCwiseBinaryOps.h"
-#include "../plugins/MatrixCwiseBinaryOps.h"
-#include "../plugins/MatrixCwiseUnaryOps.h"
+// #include "../plugins/MatrixCwiseBinaryOps.h"
+// #include "../plugins/MatrixCwiseUnaryOps.h"
 #ifdef EIGEN_ARRAYBASE_PLUGIN
 #include EIGEN_ARRAYBASE_PLUGIN
 #endif
@@ -140,13 +140,6 @@ public:
 
   /** \returns an \link Eigen::MatrixBase Matrix \endlink expression of this array
    * \sa MatrixBase::array() */
-  // EIGEN_DEVICE_FUNC
-  // MatrixWrapper<Derived> matrix() { return MatrixWrapper<Derived>(derived()); }
-  // EIGEN_DEVICE_FUNC
-  // const MatrixWrapper<const Derived> matrix() const { return MatrixWrapper<const Derived>(derived()); }
-
-  //     template<typename Dest>
-  //     inline void evalTo(Dest& dst) const { dst = matrix(); }
 
 protected:
   EIGEN_DEFAULT_COPY_CONSTRUCTOR(ArrayBase)
