@@ -345,8 +345,8 @@ public:
 #endif
 
 private:
-  template <typename MatrixType, typename OtherDerived, bool SwapPointers>
-  friend struct internal::matrix_swap_impl;
+  // template <typename MatrixType, typename OtherDerived, bool SwapPointers>
+  // friend struct internal::matrix_swap_impl;
 };
 
 /** \defgroup arraytypedefs Global array typedefs

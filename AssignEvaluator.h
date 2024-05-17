@@ -905,6 +905,7 @@ EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void call_assignment(const Dst &dst, const
 }
 
 // Deal with "assume-aliasing"
+// here we assume that 'src' is aliased to 'dst'
 template <typename Dst, typename Src, typename Func>
 EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void call_assignment(
     Dst &dst, const Src &src, const Func &func,
