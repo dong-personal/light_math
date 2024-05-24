@@ -849,9 +849,9 @@ EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void call_dense_assignment_loop(
   auto max_threads = omp_get_max_threads();
   auto stride = dst.size() / max_threads;
 #pragma omp parallel for
-  for (Index i = 0; i < omp_get_max_threads() - 1; ++i)
+  for (Index i = 0; i < max_threads - 1; ++i)
   {
-    std::fill_n(dst.data() + stride * (i - 1), dst.size(), src.functor()());
+    std::fill_n(dst.data() + stride * i, stride, src.functor()());
   }
   std::fill_n(dst.data() + stride * (max_threads - 1), dst.size() - stride * (max_threads - 1),
               src.functor()());
