@@ -93,8 +93,8 @@ public:
 #include "../plugins/ArrayCwiseBinaryOps.h"
 #include "../plugins/ArrayCwiseUnaryOps.h"
 #include "../plugins/CommonCwiseBinaryOps.h"
-// #include "../plugins/MatrixCwiseBinaryOps.h"
-// #include "../plugins/MatrixCwiseUnaryOps.h"
+#include "../plugins/MatrixCwiseBinaryOps.h"
+#include "../plugins/MatrixCwiseUnaryOps.h"
 #ifdef EIGEN_ARRAYBASE_PLUGIN
 #include EIGEN_ARRAYBASE_PLUGIN
 #endif

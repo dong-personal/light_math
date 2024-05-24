@@ -143,7 +143,7 @@ norm(ArrayBase<Derived> th)
 //   * \sa norm(), normalized()
 //   */
 template <typename Derived>
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void normalize(ArrayBase<Derived> th)
+EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void normalize(ArrayBase<Derived>& th)
 {
   using RealScalar = typename NumTraits<typename internal::traits<Derived>::Scalar>::Real;
   RealScalar z = squaredNorm(th);
