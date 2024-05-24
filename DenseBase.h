@@ -514,10 +514,10 @@ public:
   }
   EIGEN_DEVICE_FUNC ColwiseReturnType colwise();
 
-  // typedef CwiseNullaryOp<internal::scalar_random_op<Scalar>, PlainObject> RandomReturnType;
-  // static const RandomReturnType Random(Index rows, Index cols);
-  // static const RandomReturnType Random(Index size);
-  // static const RandomReturnType Random();
+  typedef CwiseNullaryOp<internal::scalar_random_op<Scalar>, PlainObject> RandomReturnType;
+  static const RandomReturnType Random(Index rows, Index cols);
+  static const RandomReturnType Random(Index size);
+  static const RandomReturnType Random();
 
   // template <typename ThenDerived, typename ElseDerived>
   // inline EIGEN_DEVICE_FUNC const Select<Derived, ThenDerived, ElseDerived> select(

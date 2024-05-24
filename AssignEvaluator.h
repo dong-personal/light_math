@@ -462,7 +462,10 @@ struct dense_assignment_loop<Kernel, LinearVectorizedTraversal, NoUnrolling>
     const Index alignedEnd = alignedStart + ((size - alignedStart) / packetSize) * packetSize;
 
     unaligned_dense_assignment_loop<dstIsAligned != 0>::run(kernel, 0, alignedStart);
-
+// omp
+#if (defined(EIGEN_HAS_OPENMP) && !defined(NO_OPENMP))
+#pragma omp parallel for
+#endif
     for (Index index = alignedStart; index < alignedEnd; index += packetSize)
       kernel.template assignPacket<dstAlignment, srcAlignment, PacketType>(index);
 
@@ -833,6 +836,7 @@ EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void call_dense_assignment_loop(DstXprType
 
 // Specialization for filling the destination with a constant value.
 #ifndef EIGEN_GPU_COMPILE_PHASE
+#if (defined(EIGEN_HAS_OPENMP) && !defined(NO_OPENMP))
 template <typename DstXprType>
 EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void call_dense_assignment_loop(
     DstXprType &dst,
@@ -841,8 +845,30 @@ EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void call_dense_assignment_loop(
     const internal::assign_op<typename DstXprType::Scalar, typename DstXprType::Scalar> &func)
 {
   resize_if_allowed(dst, src, func);
+  // omp
+  auto max_threads = omp_get_max_threads();
+  auto stride = dst.size() / max_threads;
+#pragma omp parallel for
+  for (Index i = 0; i < omp_get_max_threads() - 1; ++i)
+  {
+    std::fill_n(dst.data() + stride * (i - 1), dst.size(), src.functor()());
+  }
+  std::fill_n(dst.data() + stride * (max_threads - 1), dst.size() - stride * (max_threads - 1),
+              src.functor()());
+}
+#else
+template <typename DstXprType>
+EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void call_dense_assignment_loop(
+    DstXprType &dst,
+    const Eigen::CwiseNullaryOp<Eigen::internal::scalar_constant_op<typename DstXprType::Scalar>, DstXprType>
+        &src,
+    const internal::assign_op<typename DstXprType::Scalar, typename DstXprType::Scalar> &func)
+{
+  resize_if_allowed(dst, src, func);
+  // omp
   std::fill_n(dst.data(), dst.size(), src.functor()());
 }
+#endif
 #endif
 
 template <typename DstXprType, typename SrcXprType>
