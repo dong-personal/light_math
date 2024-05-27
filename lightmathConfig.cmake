@@ -3,4 +3,4 @@
 add_library(lightmath INTERFACE)
 
 # 设置这个库的包含目录
-set_target_properties(lightmath PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "/home/dong/desktop/light_math/lightmath")
+set_target_properties(lightmath PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_LIST_DIR})
