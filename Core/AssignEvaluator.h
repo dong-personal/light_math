@@ -552,6 +552,9 @@ struct dense_assignment_loop<Kernel, LinearTraversal, NoUnrolling>
   EIGEN_DEVICE_FUNC static EIGEN_STRONG_INLINE void run(Kernel &kernel)
   {
     const Index size = kernel.size();
+#if (defined(EIGEN_HAS_OPENMP) && !defined(NO_OPENMP))
+#pragma omp parallel for
+#endif
     for (Index i = 0; i < size; ++i) kernel.assignCoeff(i);
   }
 };
