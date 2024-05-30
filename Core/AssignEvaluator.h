@@ -369,6 +369,9 @@ struct dense_assignment_loop<Kernel, DefaultTraversal, NoUnrolling>
 {
   EIGEN_DEVICE_FUNC static void EIGEN_STRONG_INLINE run(Kernel &kernel)
   {
+#if (defined(EIGEN_HAS_OPENMP) && !defined(NO_OPENMP))
+#pragma omp parallel for
+#endif
     for (Index outer = 0; outer < kernel.outerSize(); ++outer)
     {
       for (Index inner = 0; inner < kernel.innerSize(); ++inner)
@@ -398,6 +401,9 @@ struct dense_assignment_loop<Kernel, DefaultTraversal, InnerUnrolling>
     typedef typename Kernel::DstEvaluatorType::XprType DstXprType;
 
     const Index outerSize = kernel.outerSize();
+#if (defined(EIGEN_HAS_OPENMP) && !defined(NO_OPENMP))
+#pragma omp parallel for
+#endif
     for (Index outer = 0; outer < outerSize; ++outer)
       copy_using_evaluator_DefaultTraversal_InnerUnrolling<Kernel, 0,
                                                            DstXprType::InnerSizeAtCompileTime>::run(kernel,
@@ -436,6 +442,9 @@ struct unaligned_dense_assignment_loop<false>
   EIGEN_DEVICE_FUNC static EIGEN_STRONG_INLINE void run(Kernel &kernel, Index start, Index end)
 #endif
   {
+#if (defined(EIGEN_HAS_OPENMP) && !defined(NO_OPENMP))
+#pragma omp parallel for
+#endif
     for (Index index = start; index < end; ++index) kernel.assignCoeff(index);
   }
 };
@@ -511,6 +520,9 @@ struct dense_assignment_loop<Kernel, InnerVectorizedTraversal, NoUnrolling>
     const Index innerSize = kernel.innerSize();
     const Index outerSize = kernel.outerSize();
     const Index packetSize = unpacket_traits<PacketType>::size;
+#if (defined(EIGEN_HAS_OPENMP) && !defined(NO_OPENMP))
+#pragma omp parallel for
+#endif
     for (Index outer = 0; outer < outerSize; ++outer)
       for (Index inner = 0; inner < innerSize; inner += packetSize)
         kernel.template assignPacketByOuterInner<DstAlignment, SrcAlignment, PacketType>(outer, inner);
@@ -535,6 +547,9 @@ struct dense_assignment_loop<Kernel, InnerVectorizedTraversal, InnerUnrolling>
     typedef typename Kernel::DstEvaluatorType::XprType DstXprType;
     typedef typename Kernel::AssignmentTraits Traits;
     const Index outerSize = kernel.outerSize();
+#if (defined(EIGEN_HAS_OPENMP) && !defined(NO_OPENMP))
+#pragma omp parallel for
+#endif
     for (Index outer = 0; outer < outerSize; ++outer)
       copy_using_evaluator_innervec_InnerUnrolling<Kernel, 0, DstXprType::InnerSizeAtCompileTime,
                                                    Traits::SrcAlignment, Traits::DstAlignment>::run(kernel,
@@ -604,7 +619,9 @@ struct dense_assignment_loop<Kernel, SliceVectorizedTraversal, NoUnrolling>
     Index alignedStart = ((!alignable) || bool(dstIsAligned))
                              ? 0
                              : internal::first_aligned<requestedAlignment>(dst_ptr, innerSize);
-
+#if (defined(EIGEN_HAS_OPENMP) && !defined(NO_OPENMP))
+#pragma omp parallel for
+#endif
     for (Index outer = 0; outer < outerSize; ++outer)
     {
       const Index alignedEnd = alignedStart + ((innerSize - alignedStart) & ~packetAlignedMask);
@@ -639,7 +656,9 @@ struct dense_assignment_loop<Kernel, SliceVectorizedTraversal, InnerUnrolling>
       vectorizableSize = (int(innerSize) / int(packetSize)) * int(packetSize),
       size = DstXprType::SizeAtCompileTime
     };
-
+#if (defined(EIGEN_HAS_OPENMP) && !defined(NO_OPENMP))
+#pragma omp parallel for
+#endif
     for (Index outer = 0; outer < kernel.outerSize(); ++outer)
     {
       copy_using_evaluator_innervec_InnerUnrolling<Kernel, 0, vectorizableSize, 0, 0>::run(kernel, outer);
